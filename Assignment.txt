@@ -1,0 +1,76 @@
+AWS ASSIGNMENT-1
+Raghunandhan Kotakonda							02/11/2020
+1.How to find CPU, Memory, I/o in linux?
+Ans:
+•	To find CPU usage on Linux we use Top and ps -af commands
+•	To find memory utilization we use free -m and vmstat -s commands
+•	To find I/O utilization we use iostat -xtc 5 3 command gives 3 outputs for every 5 seconds
+2.How to find disk space of root and every folder underneath?
+Ans: du command displays the amount of disk space used by the specified files and for each subdirectory. To see disk space on root, use this command: sudo du
+3.Check the current working directory
+Ans: We use PWD command to know current working directory
+4.Create a directory (name: dir1) and a file(file1) with linux command and insert some data in that file1.
+Ans: 
+a.	To create directory, we use this command: mkdir dir1
+b.	Go to dir1 directory: cd dir1
+c.	Create text file: vi file1.txt or nano file1.txt
+d.	Type i to insert text and Enter some data “New file1.txt is just created”
+e.	To exit the vi-editor press esc and give: wq and enter
+5.Difference between symlink and hard link
+Ans: A symlink is a soft link to the original file and has no value if the original file is deleted. If the original file is deleted, the symlink an only point to a non-exixtant file whereas the hardlink is the mirror copy of the original file so even if the original file is deleted the hardlink has all the data the original file had.
+6.When you create a script for running on a system, what is the typical first line at the very top of each script?
+Ans: The first line tells the shell that if you execute the script directly and the first two characters of the first line should be #!, then follows the path to the shell that should interpret the commands that follow. For the purpose of this course, all scripts will start with the line
+#!/bin/bash
+7.How to find disk space?
+Ans: df -a command shows the amount of disk space used and available on Linux file systems.
+8.Please provide 5 vi or nano shortcuts
+Ans: Five nano shortcuts are 
+•	ctrl -o  writes changes to a file 
+•	ctrl -x  quits nano
+•	ctrl -a  move to the beginning of the line
+•	alt -g  go to the target line number
+•	$ ctrl -w  searches for a string of text
+9.what is a mount point and how to mount a volume?
+Ans:
+•	A mount point is an empty directory in the accessible file system on which an additional filesystem is logically attached.
+•	To mount volume, create a new directory /mnt to use as mount point and the command is sudo mkdir /mnt/first
+•	Use mount, To mount the volume’s filesystem mount pointand command is sudo mount -o defaults,nofail,discard,noatime /dev/disk/by-id/second /mnt/first
+10.What is root '/'? also describe the functionality of every folder within root?
+Ans: Root is the user name or account that by default has access to all commands and files on a Linux or other Unix-like operating system. It is also referred to as the root account, root user and the superuser
+•/boot - Stores the boot loader configuration files, is responsible for storing the configuration files for GRUB, and other files responsible for initializing and running the OS properly.
+•/dev - Stores all the device information files, is responsible for storing files about the devices installed in the machine, the hardware
+•/etc - Stores all the configuration files, is responsible for storing nearly all the configuration files used by different services and even by the hardware.
+•/home - Stores user created files, is responsible for storing files and directories created by a normal user
+•/lib - Responsible for storing all the library files used by the kernel in order to run properly on a 32-bit architecture.
+•/lib64 - Responsible for storing all the library files used by the kernel in order to run properly on a 64-bit architecture.
+•/media - Stores all third-party device mount points, storing all mount points for every third-party removable storage device you install, like CD –Rom, USB Drives, etc
+•/mnt - Stores permanent mount points, typically contains the mount points for file systems mounted after the system is booted
+•/opt - Stores remote system mount points, this directory typically contains extra and third party software.
+•/proc - Stores remote system process info, is a virtual file system containing information about system resources
+•/root - Super user home directory, administrative user's home directory, it stores all files created by the root user
+•/run - Stores process info of user, process information about all the users after a successful login.
+•/sbin - Stores system commands, that can be performed by an administrative or root user
+•/srv - Stores service-related files
+•/sys - Stores system related files
+•/tmp - Stores temporary files, is usually cleaned up by the system at boot.
+•/usr - Stores user related files, like programs, libraries, documentation and other user-related files
+•/var - Stores all the variable files, such as mails, logs, printer spool data
+
+11.Please explain git branching strategy
+Ans: A branching strategy is a set of rules and conventions that stipulate
+a.	When a developer should branch
+b.	From which branch they should branch off
+c.	When they should merge back
+d.	And to which branch should they merge back
+The different types of branches we might use are
+a.	Feature branches
+b.	Release branches
+c.	Hotfix branches
+12.Please name 5 services in AWS and describe them briefly
+Ans: 
+•	Amazon Elastic Cloud Compute (EC2): Amazon EC2 provides scalable computing capacity in the AWS cloud. The development and deployment of applications has become quick and effective and at low cost with the help of EC2.
+•	Amazon S3 (Simple Storage Service): Amazon S3 is listed top in AWS services list because of storing and retrieving the data in cloud computing. S3 allows user to store, upload and retrieve large files up to 5 Tb from the cloud. It is scalable, low-cost and high -speed web-based service designed for online backup of application programs and data.
+•	AWS Lambda: Amazon Lambda is a service that allows the user to run code without any server. It executes code only when the user needs and scales automatically. It only charges users for the compute time but not for running the code. It supports code written in Node.js, Java, Python and also in Linux.
+•	Amazon Glacier: Amazon glacier is one of the most important services provided by AWS> The glacier is an online web storage service that provide you with the low cost and effective storage with security features for archival and data backup. It stores information for quite a very long time. 
+•	Amazon SNS (Simple Notification Service): Amazon SNS is a web service provided by the AWS. SNS manages and delivers the messages or notifications to the users and clients from any cloud platform. SNS has two types of clients, Subscribers and Publishers. Publishers produce and send a message to the subscriber instance through the communication channels. Subscribers receive notification from the publisher over the one of the supported protocols such as Amazon SQS, HTTP and Lambda. 
+
