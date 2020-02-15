@@ -1,0 +1,47 @@
+{
+"Parameters": {
+ "InstanceType": {
+        "Description": "Cira-Raghu",
+        "Type": "String",
+        "Default": "t2.micro",
+    },
+    "KeyName": {
+        "Description": "my keypair name",
+        "Type": "AWS::EC2::KeyPair::KeyName",
+        "Default": "ciratraining"
+    },
+ 
+    "Subnet":{
+        "Type": "AWS::EC2::Subnet::Id",
+        "Default": "subnet-0f579358a534dc64f"
+    },
+    "InstanceType": {
+        "Description": "Cira-Raghu",
+        "Type": "String",
+        "Default": "t2.micro",
+    },
+    "SecurityGroup":{
+         "Type": "AWS::EC2::SecurityGroup::Id",
+         "Default" : "sg-0ace05ea46a0a8ebe",
+    }
+},
+"Resources":{
+    "Server": {
+        "Type": "AWS::EC2::Instance",
+        "Properties": {
+            "ImageId": "ami-062f7200baf2fa504",
+            "InstanceType": {"Ref": "InstanceType"},
+            "KeyName": {"Ref": "KeyName"},
+            "SecurityGroupIds": [{"Ref": "SecurityGroup"}],
+            "SubnetId": {"Ref": "Subnet"}
+        }
+    }
+},
+"Outputs": {
+    "PublicName": {
+        "Value": {"Fn::GetAtt": ["Server", "PublicDnsName"]},
+        "Description": "Public name (connect via SSH)"
+    }   
+}
+}
+
