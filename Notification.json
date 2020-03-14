@@ -1,20 +1,11 @@
 {
-	"AWSTemplateFormatVersion": "2010-09-09",
+"AWSTemplateFormatVersion": "2010-09-09",
 
-	"Description": "CloudFormation template for creating an ec2 instance with Auto Scaling",
+"Description": "CloudFormation template for creating an ec2 instance with Auto Scaling",
 
-	"Parameters": {
+"Parameters": {
 
-		"VPC": {
-			"Type": "AWS::EC2::VPC::Id",
-			"Default": "vpc-0c404dcb027419c97"
-		},
-
-		"Subnets": {
-			"Type": "List<AWS::EC2::Subnet::Id>",
-			"Default": "subnet-0f5adfaf5a6a745da, subnet-0f579358a534dc64f"
-		},
-		"ComparisonOperator": {
+"ComparisonOperator": {
             "Description":"Comparison Operator for Alarm",
             "Type":"String",
             "Default" : "GreaterThanThreshold",
@@ -29,84 +20,142 @@
             "ConstraintDescription" : "must be a valid statistic that can be applied to the alarm's associated metric."
         },
 
-		"InstanceType": {
-			"Type": "String",
-			"Default": "t2.micro",
-			"AllowedValues": ["t1.micro", "t2.nano", "t2.micro"]
-		},
+"InstanceType": {
+"Type": "String",
+"Default": "t2.micro",
+"AllowedValues": ["t1.micro", "t2.nano", "t2.micro"]
+},
 
-		"KeyName": {
-			"Type": "AWS::EC2::KeyPair::KeyName",
-			"Default": "ciratraining"
-		},
-		"SecurityGroup": {
-			"Type": "String",
-			"Default": "sg-0ace05ea46a0a8ebe"
-		}
-	},
+"KeyName": {
+"Type": "AWS::EC2::KeyPair::KeyName",
+"Default": "ciratraining"
+}
 
-	"Resources": {
+},
 
-		"ServerAutoGroup": {
-			"Type": "AWS::AutoScaling::AutoScalingGroup",
-			"Properties": {
-				"VPCZoneIdentifier": {
-					"Ref": "Subnets"
-				},
-				"LaunchConfigurationName": {
-					"Ref": "LaunchConfig"
-				},
-				"MinSize": "1",
-				"MaxSize": "3"
-			}
-		},
-		"S3Bucket" : {
+"Resources": {
+
+"VPC": {
+"Type": "AWS::EC2::VPC",
+"Properties" : {
+ "CidrBlock" : "172.10.10.0/24",
+ "InstanceTenancy" : "default",
+ "Tags" : [ {"Key" : "foo", "Value" : "bar"}]
+ }
+},
+        "mySubnet1": {
+"Type": "AWS::EC2::Subnet",
+"Properties" : {
+ "VpcId" : { "Ref" : "VPC" },
+ "CidrBlock" : "172.10.10.0/25",
+ "AvailabilityZone" : "us-east-1a",
+ "Tags" : [ {"Key" : "foo", "Value" : "bar"}]
+ }
+},
+"mySubnet2": {
+"Type": "AWS::EC2::Subnet",
+"Properties" : {
+ "VpcId" : { "Ref" : "VPC" },
+ "CidrBlock" : "172.10.10.128/25",
+ "AvailabilityZone" : "us-east-1a",
+ "Tags" : [ {"Key" : "foo", "Value" : "bar"}]
+ }
+},
+"myInternetGateway" : {
+            "Type" : "AWS::EC2::InternetGateway",
+            "Properties" : {
+               "Tags" : [ {"Key" : "foo", "Value" : "bar"}]
+                 }
+            },
+"AttachGateway" : {
+            "Type" : "AWS::EC2::VPCGatewayAttachment",
+            "Properties" : {
+                "VpcId" : { "Ref" : "VPC" },
+                "InternetGatewayId" : { "Ref" : "myInternetGateway" }
+                }
+            },
+
+        "SecurityGroup": {
+            "Type" : "AWS::EC2::SecurityGroup",
+            "Properties": { 
+               "GroupDescription" : "Aloow Https and http traffic",
+               "VpcId" : { "Ref" : "VPC" },
+               "SecurityGroupIngress" : [{
+                    "IpProtocol" : "tcp",
+                    "FromPort" : 22,
+                    "ToPort" : 22,
+                    "CidrIp" : "0.0.0.0/0"
+                   }],
+  "SecurityGroupIngress": [{
+                "IpProtocol" : "tcp",
+                    "FromPort" : 443,
+                    "ToPort" : 443,
+                    "CidrIp" : "10.10.10.0/24"
+                   }]
+                }
+             }, 
+"ServerAutoGroup": {
+"Type": "AWS::AutoScaling::AutoScalingGroup",
+"DependsOn": "TargetGroup80",
+"Properties": {
+"VPCZoneIdentifier": [{
+"Ref": "mySubnet1",
+"Ref": "mySubnet2"
+}],
+"LaunchConfigurationName": {
+"Ref": "LaunchConfig"
+},
+"MinSize": "1",
+"MaxSize": "3"
+}
+},
+"S3Bucket" : {
           "Type" : "AWS::S3::Bucket",
           "Properties" : {
-            "BucketName" : "s3-raghunandhan"
+            "BucketName" : "raghunandhan"
            }  
         },
-		"RaghuAlarm": {
+"RaghuAlarm": {
           "Type" : "AWS::CloudWatch::Alarm",
           "Properties" : {
               "AlarmDescription" : "Alarm for EC2  Metric",
               "AlarmActions": [ "arn:aws:sns:us-east-1:276757432750:Raghu"],
-			  "ComparisonOperator" : { "Ref": "ComparisonOperator" },
+ "ComparisonOperator" : { "Ref": "ComparisonOperator" },
               "EvaluationPeriods": "5",
               "Statistic": { "Ref": "Statistic" },
               "MetricName": "Raghu-notification",
               "Namespace": "Raghu-notification",
               "Period": "10",
               "Threshold": "0",
-			  "AlarmName": "Raghuhtmlhits"
+ "AlarmName": "Raghuhtmlhits"
           }
       },
-		"RootRole": {
-		  "Type": "AWS::IAM::Role",
-		  "Properties": {
-		     "AssumeRolePolicyDocument": {
-			    "Version" : "2012-10-17",
-				"Statement" : [ {
-				  "Effect": "Allow",
-				  "Principal": {
-				     "Service": [ "ec2.amazonaws.com" ]
-					},
-				  "Action": [ 
-				    "sts:AssumeRole"
- 					]
-				}]
-			},
-			 "Path": "/",
-			 "Policies": [
-			    {
-				   "PolicyName": "LogRolePolicy",
-				   "PolicyDocument": {
-				       "Version": "2012-10-17",
-					   "Statement": [
-					      {
-						     "Effect": "Allow",
-							 "Action": [
-							     "cloudwatch:PutMetricData",
+"RootRole": {
+ "Type": "AWS::IAM::Role",
+ "Properties": {
+    "AssumeRolePolicyDocument": {
+   "Version" : "2012-10-17",
+"Statement" : [ {
+ "Effect": "Allow",
+ "Principal": {
+    "Service": [ "ec2.amazonaws.com" ]
+},
+ "Action": [ 
+   "sts:AssumeRole"
+  ]
+}]
+},
+"Path": "/",
+"Policies": [
+   {
+  "PolicyName": "LogRolePolicy",
+  "PolicyDocument": {
+      "Version": "2012-10-17",
+  "Statement": [
+     {
+    "Effect": "Allow",
+"Action": [
+    "cloudwatch:PutMetricData",
                                  "ec2:DescribeVolumes",
                                  "ec2:DescribeTags",
                                  "logs:PutLogEvents",
@@ -114,92 +163,121 @@
                                  "logs:DescribeLogGroups",
                                  "logs:CreateLogStream",
                                  "logs:CreateLogGroup"
-						     ],
-						     "Resource": "*"
-							 
-					     },
-					    {
-						    "Effect": "Allow",
+    ],
+    "Resource": "*"
+
+    },
+   {
+   "Effect": "Allow",
                             "Action": [
                               "ssm:GetParameter"
                             ],
                             "Resource": "arn:aws:ssm:*:*:parameter/AmazonCloudWatch-*"
                         }
-					
-					]
-					}
-					}]
-							    
-			}
-		},
-		"myInstanceProfile": {
-		   "Type": "AWS::IAM::InstanceProfile",
-		   "Properties": {
-		      "Path": "/",
-			  "Roles": [{"Ref": "RootRole" }]
-			  }
-			 },
-		
-		"CloudWatch": {
-		    "Type": "AWS::IAM::Policy",
-			"Properties": {
-			  "PolicyName": "root",
-			  "PolicyDocument": {
-			      "Version" : "2012-10-17",
-				  "Statement": [{
-				     "Effect": "Allow",
-					 "Action": "*",
-					 "Resource": "*"
-				  }]
-				},
-			  "Roles": [{
-			       "Ref": "RootRole"
-				}]
-			}
-		},
-		"MySNSTopic": {
-		   "Type" : "AWS::SNS::Topic",
-		   "Properties" : {
-		      "Subscription": [{
-			     "Endpoint" : "rkotakonda@cirainfotech.com",
-				 "Protocol" : "email"
-				 }],
-			  "TopicName" : "Raghu"
+
+]
+}
+}]
+   
+}
+},
+"myInstanceProfile": {
+  "Type": "AWS::IAM::InstanceProfile",
+  "Properties": {
+     "Path": "/",
+ "Roles": [{"Ref": "RootRole" }]
+ }
+},
+"LoadBalancer": {
+              "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+              "Properties": {
+                "Name": "Raghu-LB",
+                "Scheme": "internet-facing",
+                "Subnets": [{
+"Ref": "mySubnet1",
+"Ref": "mySubnet2"
+}],
+                "Type": "network"
+                }
+            },
+        "TargetGroup80": {
+              "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+              "Properties": {
+                "Name": "raghu-LB80",
+                "Port": 80,
+                "Protocol": "TCP",
+                "VpcId": {
+                  "Ref": "VPC"
+                   }
+                }
+            },
+
+"CloudWatch" : {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+   "PolicyName": "s3bucket",
+   "PolicyDocument": {
+       "Version": "2012-10-17",
+       "Statement": [
+          {
+                        "Effect": "Allow",
+                        "Action": [
+                             "s3:GetObject",
+                             "s3:PutObject",
+                             "s3:DeleteObject",
+                             "s3:ListBucket"
+                            ],
+                        "Resource": "arn:aws:s3:::raghunandhan/*"
+       }]
+},
+ "Roles": [{
+      "Ref": "RootRole"
+}]
+}
+},
+"MySNSTopic": {
+  "Type" : "AWS::SNS::Topic",
+  "Properties" : {
+     "Subscription": [{
+    "Endpoint" : "rkotakonda@cirainfotech.com",
+"Protocol" : "email"
+}],
+ "TopicName" : "Raghu"
             }
         },
-   		
-	
+    
 
-		"LaunchConfig": {
-			"Type": "AWS::AutoScaling::LaunchConfiguration",
-			"Metadata": {
-			   "AWS::CloudFormation::Init":{
-			       "config":{
-				      "packages": {
-					    "yum": {
-						   "httpd": [],
-						   "wget": []
-						  }
-						}
-					}
-				}
-			},
-			"Properties": {
-				"KeyName": {
-					"Ref": "KeyName"
-				},
-				"ImageId": "ami-062f7200baf2fa504",
-				"SecurityGroups": [{
-					"Ref": "SecurityGroup"
-				}],
-				"InstanceType": {
-					"Ref": "InstanceType"
-				},
-				"IamInstanceProfile": { 
-				    "Ref": "myInstanceProfile"
-				},
-				"AssociatePublicIpAddress": "true",
-				"UserData": {
+
+"LaunchConfig": {
+"Type": "AWS::AutoScaling::LaunchConfiguration",
+"Metadata": {
+  "AWS::CloudFormation::Init":{
+      "config":{
+     "packages": {
+   "yum": {
+  "httpd": [],
+  "wget": []
+ }
+}
+}
+}
+},
+"Properties": {
+"KeyName": {
+"Ref": "KeyName"
+},
+"ImageId": "ami-062f7200baf2fa504",
+"SecurityGroups": [{
+"Ref": "SecurityGroup"
+}],
+"InstanceType": {
+"Ref": "InstanceType"
+},
+"IamInstanceProfile": { 
+   "Ref": "myInstanceProfile"
+},
+"AssociatePublicIpAddress": "true",
+"UserData": {
                   "Fn::Base64": {
                      "Fn::Join": [
                        "",
@@ -217,26 +295,26 @@
                          "wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo \n",
                          "rpm --import  https://jenkins-ci.org/redhat/jenkins-ci.org.key \n",
                          "yum install jenkins -y \n",
-						 "yum install git -y \n",
+"yum install git -y \n",
                          "yum install java-1.8.0 -y \n",
-						 "yum install java-1.8.0-openjdk-devel -y \n",
-						 "yum install -y awslogs \n",
-						 "service awslogsd start \n",
-						 "chkconfig awslogsd on \n",
+"yum install java-1.8.0-openjdk-devel -y \n",
+"yum install -y awslogs \n",
+"service awslogsd start \n",
+"chkconfig awslogsd on \n",
                          "service jenkins start \n",
-						 "chmod 777 /etc/awslogs/awscli.conf \n",
-						 "chmod 777 /etc/awslogs/awslog.conf \n",
+"chmod 777 /etc/awslogs/awscli.conf \n",
+"chmod 777 /etc/awslogs/awslog.conf \n",
                          "sleep 30 \n",
                          "pwd \n",
                          "ls \n",
                          "sudo su \n",
                          "cat /var/lib/jenkins/secrets/initialAdminPassword >> /var/www/html/index.html \n",
-						 "(crontab -l 2>/dev/null; echo \"*/1 * * * * cat /var/www/html/index.html >> /var/log/messages\") | crontab -"
+"(crontab -l 2>/dev/null; echo \"*/1 * * * * cat /var/www/html/index.html >> /var/log/messages\") | crontab -"
                         ]
                       ]
                    }
                }
-			}
-		}
-	}
+}
+}
+}
 }
