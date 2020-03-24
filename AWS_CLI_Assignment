@@ -1,0 +1,18 @@
+Create an EC2 instance from aws cli
+  Ans: aws ec2 run-instances --image-id ami-07ebfd5b3428b6f4d --count 1 --instance-type t2.micro --region=us-east-1 --key-name ciratraining --security-group-ids sg-0ace05ea46a0a8ebe --subnet-id subnet-0f579358a534dc64f
+Create an S3 bucket from aws cli
+  Ans: aws s3api create-bucket --bucket raghunandhanks3 --region us-east-1
+Create a cloudwatch log group from aws cli
+  Ans: ws logs create-log-group --region us-east-1 --log-group-name raghunnadhanklogs
+what is ECR?
+Ans: Amazon Elastic Container Registry (ECR) is a fully-managed Docker container registry that makes it easy for developers to store, manage, and deploy Docker container images. Amazon ECR is integrated with Amazon Elastic Container Service (ECS), simplifying your development to production workflow.
+
+List differences between AWS ECS fargate and ECS EC2
+Ans: ECS has two launch types that can define how the compute resources will be managed. The traditional EC2 launch type detailed in the overview above utilizes your own EC2 instances. Fargate removes the responsibility of provisioning, configuring and managing the EC2 instances by allowing AWS to manage the EC2 instances.
+What is HashMap algorithm?
+What is Grafana?
+	Ans: Grafana is an open source metric analytics and visualization suite for visualizing time series data that supports various types of data sources. 0 AWS reviews. Up-to-date, customizable, and secure.
+
+What is Kibana?
+	
+Ans: Kibana is an open-source data visualization and exploration tool used for log and time-series analytics, application monitoring, and operational intelligence use cases. It offers powerful and easy-to-use features such as histograms, line graphs, pie charts, heat maps, and built-in geospatial support. Also, it provides tight integration with Elasticsearch, a popular analytics and search engine, which makes Kibana the default choice for visualizing data stored in Elasticsearch.
