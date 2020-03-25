@@ -74,6 +74,18 @@
                 "InternetGatewayId" : { "Ref" : "myInternetGateway" }
                 }
             },
+"myDNSRecord" : {
+         "Type" : "AWS::Route53::RecordSet",
+         "Properties" : {
+            "Name" : "trainingcira.com",
+			"HostedZoneId" : "Z3CPSGE0FT6QBI",
+            "ResourceRecords" : [
+               "172.10.10.54"
+            ],
+            "TTL" : "300",
+            "Type" : "A"
+         }
+      },
 
         "SecurityGroup": {
             "Type" : "AWS::EC2::SecurityGroup",
