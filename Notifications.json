@@ -80,7 +80,7 @@
             "Name" : "trainingcira.com",
 			"HostedZoneId" : "Z3CPSGE0FT6QBI",
             "ResourceRecords" : [
-               "172.10.10.54"
+               "172.10.10.95"
             ],
             "TTL" : "300",
             "Type" : "A"
